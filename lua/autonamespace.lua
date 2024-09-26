@@ -5,7 +5,7 @@ end
 
 -- Recursively search for a .csproj or .sln file in the directory or its parents
 local function search(root, dir, stack)
-	table.insert(stack, vim.fn.fnamemodify(dir, ':t')) -- Add directory name to stack
+	table.insert(stack, 1, vim.fn.fnamemodify(dir, ':t')) -- Add directory name to stack
 
 	local scan = vim.loop.fs_scandir(dir)
 	if scan then
@@ -48,15 +48,11 @@ end
 local function fill_namespace()
 	local row, col = unpack(vim.api.nvim_win_get_cursor(0))
 	local namespace = get_namespace()
-	-- Notice the namespace is given as an array parameter, you can pass multiple strings.
-	-- Params 2-5 are for start and end of row and columns.
-	-- See earlier docs for param clarification or `:help nvim_buf_set_text.
 	vim.api.nvim_buf_set_text(0, row - 1, col, row - 1, col, { namespace })
 end
 
-
 local function setup(opts)
-	vim.api.nvim_create_user_command("FillNamespace", fill_namespace, {})
+	vim.api.nvim_create_user_command("NamespaceFill", fill_namespace, {})
 end
 
 return {
